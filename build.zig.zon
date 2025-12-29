@@ -5,7 +5,10 @@
     .paths = .{
         "build.zig",
         "build.zig.zon",
-        "main.zig",
+        "src"
+        // For example...
+        //"LICENSE",
+        //"README.md",  
     },
     .dependencies = .{
         .delve = .{
