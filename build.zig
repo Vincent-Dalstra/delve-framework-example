@@ -1,6 +1,8 @@
 const std = @import("std");
 const delve_import = @import("delve");
 
+const appName = "delve-framework-example";  // Determines the name of the generated executable
+
 pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
@@ -20,12 +22,12 @@ pub fn build(b: *std.Build) !void {
     if (target.result.cpu.arch.isWasm()) {
         app = b.addLibrary(.{
             .root_module = root_module,
-            .name = "delve-framework-example",
+            .name = appName,
             .linkage = .static,
         });
     } else {
         app = b.addExecutable(.{
-            .name = "delve-framework-example",
+            .name = appName,
             .root_module = root_module,
         });
     }
@@ -40,7 +42,7 @@ pub fn build(b: *std.Build) !void {
         const link_step = try delve_import.emscriptenLinkStep(b, app, sokol_dep);
 
         // and add a run step
-        const run = delve_import.emscriptenRunStep(b, "delve-framework-example", sokol_dep);
+        const run = delve_import.emscriptenRunStep(b, appName, sokol_dep);
         run.step.dependOn(&link_step.step);
 
         b.step("run", "Run for Web").dependOn(&run.step);
