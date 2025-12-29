@@ -1,7 +1,7 @@
 const std = @import("std");
 const delve_import = @import("delve");
 
-pub fn build(b: *std.Build) void {
+pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
@@ -10,33 +10,36 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
+    const root_module = b.createModule(.{
+        .root_source_file = b.path("main.zig"),
+        .target = target,
+        .optimize = optimize,
+    });
+
     var app: *std.Build.Step.Compile = undefined;
-    if (target.result.isWasm()) {
-        app = b.addStaticLibrary(.{
-            .target = target,
-            .optimize = optimize,
+    if (target.result.cpu.arch.isWasm()) {
+        app = b.addLibrary(.{
+            .root_module = root_module,
             .name = "delve-framework-example",
-            .root_source_file = .{ .path = "main.zig" },
+            .linkage = .static,
         });
     } else {
         app = b.addExecutable(.{
             .name = "delve-framework-example",
-            .root_source_file = .{ .path = "main.zig" },
-            .target = target,
-            .optimize = optimize,
+            .root_module = root_module,
         });
     }
 
     app.root_module.addImport("delve", delve.module("delve"));
     app.linkLibrary(delve.artifact("delve"));
 
-    if (target.result.isWasm()) {
+    if (target.result.cpu.arch.isWasm()) {
         const sokol_dep = delve.builder.dependency("sokol", .{});
 
-        const link_step = delve_import.emscriptenLinkStep(b, app, sokol_dep) catch {
-            return;
-        };
+        // link with emscripten
+        const link_step = try delve_import.emscriptenLinkStep(b, app, sokol_dep);
 
+        // and add a run step
         const run = delve_import.emscriptenRunStep(b, "delve-framework-example", sokol_dep);
         run.step.dependOn(&link_step.step);
 
@@ -48,11 +51,10 @@ pub fn build(b: *std.Build) void {
     }
 
     const exe_tests = b.addTest(.{
-        .root_source_file = .{ .path = "main.zig" },
-        .target = target,
-        .optimize = optimize,
+        .root_module = root_module,
     });
 
     const test_step = b.step("test", "Run unit tests");
     test_step.dependOn(&exe_tests.step);
 }
+
