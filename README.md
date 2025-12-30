@@ -15,14 +15,14 @@ To build for web, use the -Dtarget=wasm32-emscripten build argument:
 zig build run -Dtarget=wasm32-emscripten
 ```
 
-This will 
+This will:
 - build the web application
 - launch a local web server (using emrun.py)
 - Open it using your default browser. 
 
-Documentation for emrun.py: https://emscripten.org/docs/compiling/Running-html-files-with-emrun.html
+ For more details on the features of emrun.py: https://emscripten.org/docs/compiling/Running-html-files-with-emrun.html
 
-### Run web application without python
+## Run web application without python
 
 The built application has no dependencies, and can be served through any http server. This includes bare-metal hosts with no operating-system: useful for creating web-config pages for embedded systems.
 
