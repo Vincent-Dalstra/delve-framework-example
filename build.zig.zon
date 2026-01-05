@@ -1,14 +1,15 @@
 .{
     .name = .delve_framework_example,
     .version = "0.0.1",
+    .minimum_zig_version = "0.15.2",
     .fingerprint = 0xcbc471bef4d916a5,
     .paths = .{
         "build.zig",
         "build.zig.zon",
-        "src"
+        "src",
         // For example...
         //"LICENSE",
-        //"README.md",  
+        //"README.md",
     },
     .dependencies = .{
         .delve = .{
