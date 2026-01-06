@@ -1,7 +1,7 @@
 const std = @import("std");
 const delve_import = @import("delve");
 
-const appName = "delve-framework-example";  // Determines the name of the generated executable
+const appName = "delve-framework-example"; // Determines the name of the generated executable
 
 pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
@@ -58,5 +58,8 @@ pub fn build(b: *std.Build) !void {
 
     const test_step = b.step("test", "Run unit tests");
     test_step.dependOn(&exe_tests.step);
-}
 
+    // Enable ZLS build-on-save (see https://zigtools.org/zls/guides/build-on-save)
+    const check = b.step("check", "Check if app compiles");
+    check.dependOn(&app.step);
+}
