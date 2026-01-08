@@ -2,7 +2,9 @@
 
 This repository shows how to include and use the Delve Framework in another Zig project using Zig's package manager.
 
-Currently targets Zig 0.12.0
+Currently targets Zig 0.15.2
+
+Does _not_ work on zig 0.15.1 (this has been tested!)
 
 ## Build and run
 To build and run natively:
