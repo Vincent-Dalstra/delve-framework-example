@@ -48,8 +48,13 @@ pub fn build(b: *std.Build) !void {
         b.step("run", "Run for Web").dependOn(&run.step);
     } else {
         b.installArtifact(app);
-        const run = b.addRunArtifact(app);
-        b.step("run", "Run").dependOn(&run.step);
+
+        const run_step = b.step("run", "Run");
+
+        const run_cmd = b.addRunArtifact(app);
+        run_step.dependOn(&run_cmd.step);
+
+        run_cmd.step.dependOn(b.getInstallStep());
     }
 
     const exe_tests = b.addTest(.{
